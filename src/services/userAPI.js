@@ -23,6 +23,7 @@ export const getUser = () => new Promise((resolve) => {
   if (user === null) {
     user = {};
   }
+  // console.log(user);
   simulateRequest(user)(resolve);
 });
 

@@ -13,6 +13,11 @@ class Login extends React.Component {
     };
   }
 
+  componentDidMount() {
+    sessionStorage.clear();
+    localStorage.clear();
+  }
+
   handleButton = () => {
     const MINIMUM_CHARACTER = 3;
     const { nameInputValue } = this.state;
@@ -40,6 +45,14 @@ class Login extends React.Component {
     history.push('/search');
   }
 
+  resetState = () => {
+    this.setState({
+      nameInputValue: '',
+      isButtonDisabled: true,
+      isLoading: false,
+    });
+  }
+
   handleSubmit = async () => {
     try {
       const { nameInputValue } = this.state;
@@ -49,13 +62,13 @@ class Login extends React.Component {
       this.handleRedirect();
     } catch {
       console.error('User not registered!');
-      this.switchIsLoading();
+      this.resetState();
     }
   }
 
   render() {
     const { isButtonDisabled, isLoading } = this.state;
-    return isLoading ? <Loading /> : (
+    return (isLoading) ? <Loading /> : (
       <div data-testid="page-login">
         <form>
           <input
@@ -64,7 +77,6 @@ class Login extends React.Component {
             onChange={ this.handleName }
             data-testid="login-name-input"
           />
-          {/* <Link to="/search"> */}
           <input
             type="button"
             disabled={ isButtonDisabled }
@@ -72,7 +84,6 @@ class Login extends React.Component {
             data-testid="login-submit-button"
             value="Entrar"
           />
-          {/* </Link> */}
         </form>
       </div>
     );

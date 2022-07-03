@@ -1,0 +1,9 @@
+.header {
+  background-color: mediumseagreen;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+/* 
+.header-loading {
+} */

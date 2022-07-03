@@ -1,9 +1,10 @@
 .header {
   background-color: mediumseagreen;
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
+  padding: 1rem;
 }
-/* 
+
+/*
 .header-loading {
 } */

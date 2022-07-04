@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AlbumCard from '../components/AlbumCard';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
@@ -11,7 +12,7 @@ class Search extends React.Component {
       artistNameInputValue: '',
       isButtonDisabled: true,
       isLoading: false,
-      didSearched: false,
+      didSearch: false,
       albums: [],
     };
   }
@@ -32,22 +33,22 @@ class Search extends React.Component {
   }
 
   handleSearchContent = () => {
-    const { isLoading, albums, didSearched } = this.state;
-    if (!albums.length && didSearched && !isLoading) {
+    const { isLoading, albums, didSearch } = this.state;
+    if (!albums.length && didSearch && !isLoading) {
       return <p>Nenhum álbum foi encontrado</p>;
     }
-    if (albums && didSearched) {
+    if (albums && didSearch) {
       return isLoading ? <Loading /> : this.createAlbums(albums);
     }
   }
 
   getData = async (event) => {
     const { artistNameInputValue } = this.state;
-    const artistNameFormatted = this.validateArtistName(artistNameInputValue);
     this.switchIsLoading();
-    this.switchDidSearched();
+    this.switchDidSearch(true);
     this.clearInput(event);
-    const data = await searchAlbumsAPI(artistNameFormatted);
+    const data = await searchAlbumsAPI(artistNameInputValue);
+    console.log(data);
     this.switchIsLoading();
     this.setAlbums(data);
   }
@@ -58,13 +59,6 @@ class Search extends React.Component {
     });
   }
 
-  validateArtistName = (artistName) => {
-    if (artistName.includes(' ')) {
-      artistName.replace(' ', '%20');
-    }
-    return artistName;
-  }
-
   switchIsLoading = (value) => {
     const { isLoading } = this.state;
     this.setState({
@@ -72,29 +66,26 @@ class Search extends React.Component {
     });
   };
 
-  switchDidSearched = (value) => {
-    const { didSearched } = this.state;
+  switchDidSearch = (value) => {
+    const { didSearch } = this.state;
     this.setState({
-      didSearched: (value !== undefined) ? value : !didSearched,
+      didSearch: (value !== undefined) ? value : !didSearch,
     });
   };
 
   createAlbums = (albums) => {
     const { artistNameInputValue } = this.state;
+    const artistName = artistNameInputValue;
     return (
       <>
-        <p>{ `Resultado de álbuns de: ${artistNameInputValue}` }</p>
+        <p>{ `Resultado de álbuns de: ${artistName}` }</p>
         {albums.map((album, i) => {
           const { collectionId } = album;
           const PATH = `/album/${collectionId}`;
           const TEST_ID = `link-to-album-${collectionId}`;
           return (
             <Link key={ i } to={ PATH } data-testid={ TEST_ID }>
-              <div>
-                <img src={ album.artworkUrl100 } alt="album art" />
-                <p>{ album.collectionName }</p>
-                <p>{ album.artistName }</p>
-              </div>
+              <AlbumCard albumInfo={ album } />
             </Link>
           );
         })}

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import Loading from '../components/Loading';
+import MusicCard from '../components/MusicCard';
+import AlbumCard from '../components/AlbumCard';
 
 class Album extends React.Component {
   constructor() {
@@ -34,38 +36,23 @@ class Album extends React.Component {
       isLoading,
     } = this.state;
     const [albumInfo, ...tracks] = album;
-    console.log('aqui', albumInfo, tracks);
 
     return (
       <>
         <Header />
         <div data-testid="page-album">
-          { isLoading ? <Loading /> : (
-            <>
-              <div>
-                <img src={ albumInfo.artworkUrl100 } alt="album art" />
-                <p data-testid="album-name">{ albumInfo.collectionName }</p>
-                <p data-testid="artist-name">{ albumInfo.artistName }</p>
-              </div>
-              <div>
-                { tracks.map((track, i) => {
-                  const { previewUrl } = track;
-                  const TEST_ID = 'audio-component';
-                  return (
-                    <div key={ i }>
-                      <p>{ track.trackName }</p>
-                      <audio data-testid={ TEST_ID } src={ previewUrl } controls>
-                        <track kind="captions" />
-                        O seu navegador não suporta o elemento
-                        {' '}
-                        <code>audio</code>
-                        .
-                      </audio>
-                    </div>
-                  );
-                }) }
-              </div>
-            </>) }
+          {
+            isLoading ? <Loading /> : (
+              <>
+                <AlbumCard albumInfo={ albumInfo } />
+                {
+                  tracks.map((track, i) => (
+                    <MusicCard key={ i } track={ track } />
+                  ))
+                }
+              </>
+            )
+          }
         </div>
       </>
     );

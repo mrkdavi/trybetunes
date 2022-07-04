@@ -33,7 +33,7 @@ class Search extends React.Component {
 
   handleSearchContent = () => {
     const { isLoading, albums, didSearched } = this.state;
-    if (!albums.length && didSearched) {
+    if (!albums.length && didSearched && !isLoading) {
       return <p>Nenhum álbum foi encontrado</p>;
     }
     if (albums && didSearched) {

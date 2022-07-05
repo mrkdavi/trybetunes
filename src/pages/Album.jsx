@@ -5,6 +5,7 @@ import getMusics from '../services/musicsAPI';
 import Loading from '../components/Loading';
 import MusicCard from '../components/MusicCard';
 import AlbumCard from '../components/AlbumCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   constructor() {
@@ -12,6 +13,7 @@ class Album extends React.Component {
     this.state = {
       isLoading: true,
       album: [],
+      favoriteSongs: [],
     };
   }
 
@@ -19,6 +21,8 @@ class Album extends React.Component {
     try {
       const { match: { params: { id } } } = this.props;
       const album = await getMusics(id);
+      const songs = await getFavoriteSongs();
+      this.setFavoriteSongs(songs);
       this.setState({
         album,
         isLoading: false,
@@ -30,13 +34,23 @@ class Album extends React.Component {
     }
   }
 
+  setFavoriteSongs = (songs) => {
+    this.setState({
+      favoriteSongs: songs,
+    });
+  }
+
+  itsFavorite = (track) => {
+    const { favoriteSongs } = this.state;
+    return !!favoriteSongs.find((favoriteSong) => favoriteSong.trackId === track.trackId);
+  }
+
   render() {
     const {
       album,
       isLoading,
     } = this.state;
     const [albumInfo, ...tracks] = album;
-
     return (
       <>
         <Header />
@@ -46,8 +60,12 @@ class Album extends React.Component {
               <>
                 <AlbumCard albumInfo={ albumInfo } />
                 {
-                  tracks.map((track, i) => (
-                    <MusicCard key={ i } track={ track } />
+                  tracks.map((track) => (
+                    <MusicCard
+                      key={ track.trackId }
+                      track={ track }
+                      isFavoriteSong={ this.itsFavorite(track) }
+                    />
                   ))
                 }
               </>

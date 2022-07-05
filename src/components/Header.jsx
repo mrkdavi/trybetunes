@@ -24,7 +24,8 @@ class Header extends React.Component {
     if (!sessionStorage.key(KEY)) {
       sessionStorage.setItem(KEY, user.name);
     }
-    const userName = sessionStorage.getItem(KEY);
+    const getUserResult = sessionStorage.getItem(KEY);
+    const userName = (getUserResult !== 'undefined') ? getUserResult : 'convidado';
     this.setState({
       userName,
     }, this.switchIsLoading(false));

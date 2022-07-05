@@ -10,6 +10,7 @@ class Search extends React.Component {
     super();
     this.state = {
       artistNameInputValue: '',
+      artistName: '',
       isButtonDisabled: true,
       isLoading: false,
       didSearch: false,
@@ -32,6 +33,12 @@ class Search extends React.Component {
     }, this.handleButton);
   }
 
+  setArtistNameSearched = (value) => {
+    this.setState({
+      artistName: value,
+    }, this.handleButton);
+  }
+
   handleSearchContent = () => {
     const { isLoading, albums, didSearch } = this.state;
     if (!albums.length && didSearch && !isLoading) {
@@ -43,12 +50,12 @@ class Search extends React.Component {
   }
 
   getData = async (event) => {
-    const { artistNameInputValue } = this.state;
+    const artistNameInputValue = event.target.previousElementSibling.value;
+    this.setArtistNameSearched(artistNameInputValue);
     this.switchIsLoading();
     this.switchDidSearch(true);
     this.clearInput(event);
     const data = await searchAlbumsAPI(artistNameInputValue);
-    console.log(data);
     this.switchIsLoading();
     this.setAlbums(data);
   }
@@ -74,8 +81,7 @@ class Search extends React.Component {
   };
 
   createAlbums = (albums) => {
-    const { artistNameInputValue } = this.state;
-    const artistName = artistNameInputValue;
+    const { artistName } = this.state;
     return (
       <>
         <p>{ `Resultado de álbuns de: ${artistName}` }</p>
@@ -96,6 +102,9 @@ class Search extends React.Component {
   clearInput({ target }) {
     const input = target.previousElementSibling;
     input.value = '';
+    this.setState({
+      artistNameInputValue: '',
+    });
   }
 
   render() {

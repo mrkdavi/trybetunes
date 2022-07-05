@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 class MusicCard extends React.Component {
@@ -12,10 +12,26 @@ class MusicCard extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { isFavoriteSong } = this.props;
+    this.setState({
+      isFavorite: isFavoriteSong,
+    });
+  }
+
   handleFavorite = async () => {
+    const { isFavorite } = this.state;
     const { track } = this.props;
     this.switchIsLoading();
-    await addSong(track);
+    try {
+      if (!isFavorite) {
+        await addSong(track);
+      } else {
+        await removeSong(track);
+      }
+    } catch (e) {
+      console.error(e.message);
+    }
     this.switchIsLoading();
     this.switchIsFavorite();
   }
@@ -49,10 +65,10 @@ class MusicCard extends React.Component {
           <code>audio</code>
           .
         </audio>
-        <label htmlFor="favoriteCheck">
+        <label htmlFor={ `favorite-check-${trackId}` }>
           <span>Favorita</span>
           <input
-            id="favoriteCheck"
+            id={ `favorite-check-${trackId}` }
             type="checkbox"
             checked={ isFavorite }
             data-testid={ `checkbox-music-${trackId}` }
@@ -71,6 +87,7 @@ class MusicCard extends React.Component {
 
 MusicCard.propTypes = {
   track: PropTypes.object,
+  isFavoriteSong: PropTypes.bool,
 }.required;
 
 export default MusicCard;
